@@ -166,13 +166,4 @@ Revisão feita depois da entrega acadêmica para deixar o projeto mais próximo 
 
 ---
 
-## 👥 Equipe
-
-| Papel | Integrantes |
-|---|---|
-| Product Owner | Thiago Oliveira |
-| Scrum Master | Accioli |
-| Front-end | Natã e Stefany |
-| Back-end | João e Diego |
-| Banco de Dados | Caue e Edu |
 
