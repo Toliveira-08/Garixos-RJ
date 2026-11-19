@@ -1,119 +1,102 @@
-# Garixos - Sistema de Gestão de Zeladoria e Coleta de Resíduos
+# ♻️ Garixos — Gestão de Zeladoria e Coleta de Resíduos
 
-Este projeto é uma plataforma fullstack desenvolvida como projeto acadêmico para gerenciar a logística de coleta de resíduos, conectando cidadãos a empresas de limpeza urbana. Inicialmente concebido como um protótipo visual, o sistema agora conta com uma camada robusta de dados em Node.js e banco de dados relacional.
+![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Sequelize-4169E1?logo=postgresql&logoColor=white)
+![JWT](https://img.shields.io/badge/Auth-JWT%20%2B%20bcrypt-orange)
+![CI](https://github.com/SEU_USUARIO/garixos/actions/workflows/ci.yml/badge.svg)
 
-## 👥 Equipe do Projeto
-- **Product Owner (PO):** Thiago Oliveira
-- **Scrum Master:** Accioli
-- **Front-end:** Natã e Stefany
-- **Back-end:** João e Diego
-- **Banco de Dados:** Caue e Edu
+Plataforma **fullstack** que conecta cidadãos às empresas de limpeza urbana. O cidadão cadastra endereços,
+solicita coletas (orgânico, reciclável, eletrônico, poda, entulho), acompanha o status e tira dúvidas com uma
+assistente virtual. As empresas gerenciam solicitações, chamados e usuários num painel administrativo.
 
----
+> Projeto acadêmico desenvolvido em equipe com Scrum. Depois da entrega, o projeto passou por uma revisão
+> de segurança e organização do código (detalhes em [Melhorias pós-entrega](#-melhorias-pós-entrega)).
 
-## 🖥️ Camada Front-end (Interface)
-A interface foi estruturada para ser simples e intuitiva para o usuário final:
-- `index.html`: Página para fazer login com CPF e senha.
-- `criarcadastro.html`: Página para criar uma conta nova.
-- `principal.html`: Página principal com informações e opções de coleta.
-- `css/`, `js/` e `assets/`: Arquivos de estilização, scripts visuais e imagens.
+<p align="center">
+  <img src="docs/screenshots/principal.png" alt="Tela principal do Garixos" width="85%">
+</p>
 
-> **Nota de Evolução:** Nas versões iniciais, os dados eram guardados apenas no `localStorage` do navegador e funções como mapa e login social eram apenas visuais. A versão atual integra o sistema a um banco de dados real, garantindo segurança e persistência das informações.
-
----
-
-## ⚙️ Camada Back-end e Banco de Dados
-O backend é construído em Node.js com a ORM Sequelize para gerenciar toda a operação do sistema de coleta. A arquitetura suporta perfis de acesso, dividindo as jornadas entre o Portal do Cidadão e o Painel Administrativo Interno.
-
-O assistente virtual agora é servido pelo back-end em `/api/assistant/chat`. A chave do Gemini não fica mais no front-end; ela deve ser configurada no arquivo `.env` com a variável `GEMINI_API_KEY`.
-
-### Estrutura de Diretórios
-- `package.json`: Dependências do Node e scripts.
-- `server.js`: Ponto de entrada da API RESTful com Express.
-- `config/config.json`: Configuração de conexão com o banco de dados.
-- `models/`: Definições das entidades Sequelize e arquivo de inicialização (`index.js`).
-- `repositories/`: Camada de abstração para as operações no banco de dados.
-- `migrations/`: Arquivos de migração para criar as tabelas no banco de dados.
-- `seeders/`: Diretórios para carregamento de dados fictícios ou iniciais.
-
-### Modelos Principais
-- `EmpresaLimpeza` (`models/empresalimpeza.js`)
-- `ZonaColeta` (`models/zonacoleta.js`)
-- `Veiculo` (`models/veiculo.js`)
-- `Usuario` (`models/usuario.js`)
-- `HorarioColeta` (`models/horariocoleta.js`)
-- `Endereco` (`models/endereco.js`)
-- `SolicitacaoColeta` (`models/solicitacaocoleta.js`)
-- `HistoricoSolicitacao` (`models/historicosolicitacao.js`)
+| Login | Histórico de solicitações |
+|---|---|
+| ![Login](docs/screenshots/login.png) | ![Histórico](docs/screenshots/historico.png) |
+| **Assistente virtual "Gari"** | **Painel administrativo** |
+| ![Assistente](docs/screenshots/assistente.png) | ![Painel admin](docs/screenshots/painel-admin.png) |
 
 ---
 
-## 🚀 Atualizações Recentes (Maio 2026)
+## ✨ Funcionalidades
 
-O back-end do Garixos passou por uma grande evolução estrutural, consolidando o núcleo relacional do sistema. A API agora suporta o ciclo de vida completo (CRUD) para as principais entidades da logística de coleta, com validações de integridade no PostgreSQL.
+**Portal do cidadão**
+- Cadastro com validação de senha forte e preenchimento de endereço pelo CEP (ViaCEP)
+- Solicitação de coleta por tipo de resíduo e acompanhamento do status no histórico
+- Cadastro de vários endereços, mapa de caminhões/pontos de coleta (Leaflet) e tabela de horários
+- Assistente virtual **Gari**, integrada ao **Google Gemini** (com respostas prontas quando não há chave)
+- Tutorial guiado e **modo idoso** (fonte ampliada e leitura em voz alta)
+- Abertura de chamados de suporte e envio de feedback
 
-### ✨ Novas Funcionalidades Implementadas:
-* **Gestão de Usuários e Empresas:** Finalização das rotas de atualização (`PUT`) e exclusão (`DELETE`), com proteção e regras de negócio.
-* **Mapeamento de Endereços:** CRUD completo da entidade `Endereços`, garantindo que os usuários possam registrar os locais exatos para as coletas.
-* **Zonamento Logístico:** Implementação da entidade `ZonaColetas` para dividir as áreas de atuação (ex: Zona Norte, Baixada Fluminense) e resolver chaves estrangeiras com os endereços.
-* **Gestão de Frota:** Cadastro e gerenciamento de `Veículos` para alocação nas operações das empresas de coleta.
-* **O Coração do Sistema (Solicitações de Coleta):**
-  * Criação completa do fluxo transacional cruzando Usuário, Endereço e Veículo.
-  * Implementação de mudança de status logístico (ex: de `PENDENTE` para `EM_ANDAMENTO`).
-  * **Consultas Avançadas (Eager Loading):** As rotas de requisição (`GET`) agora utilizam relacionamentos do Sequelize (`include`) para retornar um JSON estruturado e limpo, trazendo automaticamente os nomes dos usuários, logradouros e placas dos veículos, otimizando o consumo de dados pelo front-end e por futuros dashboards.
+**Painel administrativo** (`/suporte.html`, perfis `MASTER` / `ADMIN_INTERNO`)
+- Gestão das solicitações de coleta (status, alocação de veículo)
+- Gestão de chamados, feedbacks e usuários
+
+**API REST**
+- CRUD de usuários, endereços, solicitações, empresas, zonas de coleta, veículos e suporte
+- Autenticação **JWT**, senhas com **bcrypt** e controle de acesso por perfil
 
 ---
 
-## 📊 Diagrama Entidade-Relacionamento (DER)
-A arquitetura do banco de dados foi normalizada utilizando restrições de chaves estrangeiras (`FK`) e `ENUMs` para garantir a integridade do histórico operacional.
+## 🛠️ Stack
+
+| Camada | Tecnologias |
+|---|---|
+| Front-end | HTML5, CSS3, JavaScript (vanilla), Leaflet |
+| Back-end | Node.js, Express 5, Sequelize ORM |
+| Banco de dados | PostgreSQL (migrations + seeders) |
+| Segurança | JWT, bcrypt, Helmet, rate limiting |
+| IA | Google Gemini API |
+| Qualidade | Testes com `node:test`, CI com GitHub Actions |
+
+---
+
+## 🗂️ Estrutura
+
+```
+├── app.js               # Configuração do Express (middlewares, rotas, erros)
+├── server.js            # Inicialização: conecta no banco e sobe o servidor
+├── config/config.js     # Conexão com o banco via variáveis de ambiente
+├── middlewares/auth.js  # JWT + regras de permissão por perfil
+├── routes/              # Rotas da API separadas por entidade
+├── services/            # Assistente virtual (Gemini + respostas prontas)
+├── repositories/        # Acesso a dados (Sequelize)
+├── models/              # Entidades e associações
+├── migrations/          # Criação/alteração das tabelas
+├── seeders/             # Dados iniciais (empresas, zonas, admin)
+├── public/              # Front-end (HTML, CSS, JS, imagens)
+└── test/                # Testes automatizados
+```
+
+### Diagrama Entidade-Relacionamento
 
 ```mermaid
 erDiagram
-    EMPRESAS_LIMPEZA {
-        int id PK
-        varchar nome
-        varchar cnpj
-        timestamp created_at
-    }
-    ZONAS_COLETA {
-        int id PK
-        int empresa_id FK
-        varchar nome_zona
-    }
-    HORARIOS_COLETA {
-        int id PK
-        int zona_id FK
-        enum dia_semana
-        enum periodo
-        enum tipo_lixo
-    }
-    VEICULOS {
-        int id PK
-        int empresa_id FK
-        varchar placa
-        varchar marca
-        varchar modelo
-        varchar ano
-        timestamp created_at
-    }
+    EMPRESAS_LIMPEZA ||--o{ ZONAS_COLETA : "gerencia"
+    EMPRESAS_LIMPEZA ||--o{ VEICULOS : "possui"
+    EMPRESAS_LIMPEZA |o--o{ USUARIOS : "emprega"
+    ZONAS_COLETA ||--o{ HORARIOS_COLETA : "possui"
+    ZONAS_COLETA ||--o{ ENDERECOS : "abrange"
+    USUARIOS ||--o{ ENDERECOS : "cadastra"
+    USUARIOS ||--o{ SOLICITACOES_COLETA : "abre"
+    USUARIOS ||--o{ SUPORTE_SOLICITACOES : "envia"
+    ENDERECOS ||--o{ SOLICITACOES_COLETA : "local da"
+    VEICULOS ||--o{ SOLICITACOES_COLETA : "atende"
+    SOLICITACOES_COLETA ||--o{ HISTORICO_SOLICITACOES : "registra"
+
     USUARIOS {
         int id PK
-        int empresa_id FK
         varchar nome
-        varchar email
-        varchar senha
-        date data_nascimento
-        enum perfil
-        timestamp created_at
-    }
-    ENDERECOS {
-        int id PK
-        int usuario_id FK
-        varchar cep
-        varchar logradouro
-        varchar bairro
-        varchar numero
-        int zona_id FK
+        varchar email UK
+        varchar senha "hash bcrypt"
+        enum perfil "CLIENTE | ADMIN_INTERNO | MASTER"
     }
     SOLICITACOES_COLETA {
         int id PK
@@ -121,61 +104,76 @@ erDiagram
         int endereco_id FK
         int veiculo_id FK
         enum tipo_lixo
-        enum status
-        timestamp data_solicitacao
+        enum status "PENDENTE | EM_ANDAMENTO | CONCLUIDO | CANCELADO"
     }
-    HISTORICO_SOLICITACOES {
-        int id PK
-        int solicitacao_id FK
-        int usuario_id FK
-        enum status_anterior
-        enum status_novo
-        timestamp data_alteracao
-    }
-
-    EMPRESAS_LIMPEZA ||--o{ ZONAS_COLETA : "gerencia"
-    EMPRESAS_LIMPEZA ||--o{ VEICULOS : "possui"
-    ZONAS_COLETA ||--o{ HORARIOS_COLETA : "possui"
-    ZONAS_COLETA ||--o{ ENDERECOS : "abrange"
-    VEICULOS ||--o{ SOLICITACOES_COLETA : "atende"
-    USUARIOS ||--o{ ENDERECOS : "cadastra"
-    USUARIOS ||--o{ SOLICITACOES_COLETA : "abre"
-    USUARIOS ||--o{ HISTORICO_SOLICITACOES : "registra"
-    ENDERECOS ||--o{ SOLICITACOES_COLETA : "local_da"
-    SOLICITACOES_COLETA ||--o{ HISTORICO_SOLICITACOES : "possui"
-    EMPRESAS_LIMPEZA |o--o{ USUARIOS : "emprega"
-```   
-
-## 🚀 Instalação e Uso
-1. **Clone o repositório:**
-  ```bash
-  git clone [https://github.com/steh-cpu/ProjetoGarixos.git](https://github.com/steh-cpu/ProjetoGarixos.git)
-  cd garixos
-  ```
-2. **Instale as dependências:**
-  ```bash
-  npm install
-  ```
-3. **Configure as variáveis de ambiente:**
-  Crie um arquivo `.env` com o conteúdo abaixo:
-  ```bash
-  GEMINI_API_KEY=sua_chave_do_gemini
-  ```
-4. **Configure o Banco de Dados:**
-  Ajuste o arquivo `config/config.json` com as credenciais do seu banco PostgreSQL local.
-5. **Execute as Migrações para criar as tabelas:**
-  ```bash
-  npx sequelize-cli db:migrate
-  ```
-6. **Carregue dados iniciais (Opcional):**
-  ```bash
-  npx sequelize-cli db:seed:all
-  ```
-## 📌 Observações Finais
- * O projeto usa sequelize e pg para conectar ao PostgreSQL.
- * O arquivo models/index.js contém a inicialização do Sequelize e a importação automática de todos os modelos.
- * As rotas HTTP (API REST) para as entidades principais (Usuários, Empresas, Endereços, Veículos, Zonas e Solicitações) já foram estabelecidas e testadas com Express e Postman.
- * **Licença:** ISC
 ```
 
+---
+
+## 🚀 Como rodar
+
+**Pré-requisitos:** Node.js 20+ e PostgreSQL.
+
+```bash
+git clone https://github.com/SEU_USUARIO/garixos.git
+cd garixos
+npm install
+
+cp .env.example .env      # ajuste usuário/senha do banco, JWT_SECRET e ADMIN_*
+npm run db:setup          # cria o banco, roda as migrations e os seeders
+npm run dev               # http://localhost:3000
 ```
+
+- O seed cria o administrador definido em `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+- Para a assistente usar IA de verdade, preencha `GEMINI_API_KEY` no `.env`. Sem a chave, ela funciona
+  com respostas prontas.
+- `npm test` roda os testes automatizados.
+
+### Principais rotas da API
+
+| Método | Rota | Acesso |
+|---|---|---|
+| `POST` | `/api/usuarios` | Público (cadastro de cidadão) |
+| `POST` | `/api/login` | Público, retorna o token JWT |
+| `GET` | `/api/solicitacoes` | Cidadão vê as suas, admin vê todas |
+| `POST` | `/api/solicitacoes` | Cidadão logado |
+| `PUT` | `/api/solicitacoes/:id` | Admin |
+| `GET/POST/PUT/DELETE` | `/api/enderecos` | Dono do endereço ou admin |
+| `GET/POST` | `/api/suporte` | Cidadão logado (só os próprios) / admin |
+| `GET` | `/api/usuarios` | Admin |
+| `GET/POST/PUT/DELETE` | `/api/empresas`, `/api/zonas`, `/api/veiculos` | Leitura: logado · Escrita: admin |
+| `POST` | `/api/assistant/chat` | Cidadão logado |
+
+---
+
+## 🔒 Melhorias pós-entrega
+
+Revisão feita depois da entrega acadêmica para deixar o projeto mais próximo de produção:
+
+- **Senhas com hash bcrypt.** Antes eram salvas em texto puro e comparadas direto no banco.
+- **Autenticação JWT e permissões por perfil.** Antes as rotas eram abertas: qualquer pessoa podia listar
+  ou excluir usuários. Agora o cidadão só acessa os próprios dados e o cadastro público não consegue criar admin.
+- **Admin criado por seed com credenciais do `.env`**, no lugar de um login "master" fixo no código.
+- **Segredos fora do código e do histórico.** Configuração do banco via variáveis de ambiente e chave do
+  Gemini enviada só pelo servidor (em header, não na URL).
+- **Organização.** O `server.js` de quase 800 linhas virou rotas por entidade, middleware de auth, service
+  da assistente e tratamento central de erros. O front-end foi para `public/` e é servido pelo Express.
+- **Integridade do banco.** Email único e obrigatório, e corrigido o ENUM de `dia_semana`, que tinha os
+  valores de perfil por engano.
+- **Higiene do repositório.** `node_modules` removida do versionamento, scripts temporários removidos,
+  imagens otimizadas (de ~5,5 MB para ~450 KB) e scripts npm para setup.
+- **Qualidade.** Testes automatizados, CI no GitHub Actions, Helmet e rate limit no login e na assistente.
+
+---
+
+## 👥 Equipe
+
+| Papel | Integrantes |
+|---|---|
+| Product Owner | Thiago Oliveira |
+| Scrum Master | Accioli |
+| Front-end | Natã e Stefany |
+| Back-end | João e Diego |
+| Banco de Dados | Caue e Edu |
+
+Repositório original da equipe: [steh-cpu/ProjetoGarixos](https://github.com/steh-cpu/ProjetoGarixos)
