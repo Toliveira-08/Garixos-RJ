@@ -66,9 +66,9 @@ const excluirEndereco = async (id, usuario_id) => {
   }
 };
 
-const obterTodosEnderecos = async () => {
+const obterTodosEnderecos = async (filtro = {}) => {
   try {
-    return await Endereco.findAll();
+    return await Endereco.findAll({ where: filtro });
   } catch (error) {
     console.error('Erro ao buscar todos os endereços:', error);
     throw new Error('Não foi possível listar os endereços.');
@@ -90,11 +90,13 @@ const atualizarEndereco = async (id, dadosAtualizados) => {
   }
 };
 
-// Não esqueça de exportar lá embaixo!
-module.exports = { 
+const buscarEnderecoPorId = (id) => Endereco.findByPk(id);
+
+module.exports = {
+  buscarEnderecoPorId,
   obterEnderecosPorUsuario, 
   salvarEndereco, 
   excluirEndereco,
-  obterTodosEnderecos, // <-- adicione aqui
+  obterTodosEnderecos,
   atualizarEndereco
 };

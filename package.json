@@ -1,24 +1,43 @@
 {
   "name": "garixos",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Plataforma fullstack de gestão de coleta de resíduos urbanos — Node.js, Express, Sequelize e PostgreSQL",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:seed": "sequelize-cli db:seed:all",
+    "db:setup": "npm run db:create && npm run db:migrate && npm run db:seed",
+    "db:create": "sequelize-cli db:create"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.5",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
     "pg": "^8.21.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.5"
-  }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "sequelize",
+    "postgresql",
+    "jwt"
+  ]
 }

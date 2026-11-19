@@ -1,8 +1,9 @@
 const { SuporteSolicitacao, Usuario } = require('../models');
 
-const listarSolicitacoes = async () => {
+const listarSolicitacoes = async (filtro = {}) => {
   try {
     return await SuporteSolicitacao.findAll({
+      where: filtro,
       order: [['createdAt', 'DESC']],
       include: [{ model: Usuario, attributes: ['id', 'nome', 'email'] }]
     });

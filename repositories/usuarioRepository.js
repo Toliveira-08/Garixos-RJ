@@ -1,4 +1,16 @@
+const bcrypt = require('bcryptjs');
 const { Usuario, Endereco } = require('../models');
+
+const SALT_ROUNDS = 10;
+
+// Remove campos undefined para não sobrescrever dados existentes com null
+const semIndefinidos = (obj) =>
+  Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
+
+const removerSenha = (usuario) => {
+  const { senha, ...resto } = usuario.toJSON();
+  return resto;
+};
 
 const normalizarPerfil = (perfil) => {
   const valor = String(perfil || '').trim().toUpperCase();
@@ -69,13 +81,13 @@ const salvarUsuario = async (dadosUsuario) => {
   try {
     const dadosNormalizados = {
       ...dadosUsuario,
+      email: String(dadosUsuario.email).trim().toLowerCase(),
+      senha: await bcrypt.hash(dadosUsuario.senha, SALT_ROUNDS),
       perfil: normalizarPerfil(dadosUsuario.perfil)
     };
 
     const usuario = await Usuario.create(dadosNormalizados);
-    // Remove a senha do objeto antes de devolver como resposta de sucesso
-    const { senha, ...usuarioSemSenha } = usuario.toJSON();
-    return usuarioSemSenha;
+    return removerSenha(usuario);
   } catch (error) {
     console.error('Erro ao salvar usuário:', error);
     throw new Error('Não foi possível cadastrar o usuário.');
@@ -87,15 +99,15 @@ const atualizarUsuario = async (id, dadosAtualizados) => {
     const usuario = await Usuario.findByPk(id);
     
     if (usuario) {
-      const dadosNormalizados = {
+      const dadosNormalizados = semIndefinidos({
         ...dadosAtualizados,
-        perfil: dadosAtualizados.perfil ? normalizarPerfil(dadosAtualizados.perfil) : usuario.perfil
-      };
+        email: dadosAtualizados.email ? String(dadosAtualizados.email).trim().toLowerCase() : undefined,
+        senha: dadosAtualizados.senha ? await bcrypt.hash(dadosAtualizados.senha, SALT_ROUNDS) : undefined,
+        perfil: dadosAtualizados.perfil ? normalizarPerfil(dadosAtualizados.perfil) : undefined
+      });
 
       await usuario.update(dadosNormalizados);
-      // Removemos a senha do retorno para manter a segurança da API
-      const { senha, ...usuarioSemSenha } = usuario.toJSON();
-      return usuarioSemSenha;
+      return removerSenha(usuario);
     }
     return null; // Retorna nulo se o ID não existir
   } catch (error) {
@@ -118,7 +130,17 @@ const excluirUsuario = async (id) => {
   }
 };
 
-module.exports = { 
+// Confere email + senha. Retorna o usuário (sem senha) ou null.
+const verificarCredenciais = async (email, senha) => {
+  const usuario = await Usuario.findOne({ where: { email: String(email).trim().toLowerCase() } });
+  if (!usuario || !usuario.senha) return null;
+
+  const senhaConfere = await bcrypt.compare(String(senha), usuario.senha);
+  return senhaConfere ? removerSenha(usuario) : null;
+};
+
+module.exports = {
+  verificarCredenciais,
   obterUsuarios, 
   buscarPorId,
   buscarPorEmail, 

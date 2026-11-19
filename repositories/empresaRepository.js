@@ -52,18 +52,9 @@ const atualizarEmpresa = async (id, dadosAtualizados) => {
   }
 };
 
-// Não esqueça de exportar a nova função junto com as outras!
-module.exports = { 
-  obterEmpresas, 
-  salvarEmpresa, 
-  excluirEmpresa,
-  atualizarEmpresa // <-- Adicionei aqui
-};
-
-// Exportação modernizada (Shorthand Property Names)
-module.exports = { 
-  obterEmpresas, 
-  salvarEmpresa, 
+module.exports = {
+  obterEmpresas,
+  salvarEmpresa,
   excluirEmpresa,
   atualizarEmpresa
 };

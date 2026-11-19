@@ -1,8 +1,11 @@
 const { SolicitacaoColeta, Usuario, Endereco, Veiculo } = require('../models');
 
-const obterSolicitacoes = async () => {
+// filtro opcional, ex.: { usuario_id: 3 } para listar só as do cidadão
+const obterSolicitacoes = async (filtro = {}) => {
   try {
     return await SolicitacaoColeta.findAll({
+      where: filtro,
+      order: [['createdAt', 'DESC']],
       include: [
         {
           model: Usuario,
@@ -93,8 +96,11 @@ const excluirSolicitacao = async (id) => {
   }
 };
 
+const buscarSolicitacaoPorId = (id) => SolicitacaoColeta.findByPk(id);
+
 module.exports = {
   obterSolicitacoes,
+  buscarSolicitacaoPorId,
   salvarSolicitacao,
   atualizarSolicitacao,
   excluirSolicitacao
