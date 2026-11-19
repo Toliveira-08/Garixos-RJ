@@ -63,19 +63,9 @@
         </div>
     </div>
 
+    <script src="./js/api.js"></script>
     <script>
         const sessionKey = 'garinxoCurrentUser';
-        const MASTER_LOGIN = {
-            email: 'master@garixos.com',
-            senha: 'Master@123',
-            usuario: {
-                id: 0,
-                nome: 'Usuário Master',
-                email: 'master@garixos.com',
-                perfil: 'MASTER'
-            }
-        };
-
         function showMessage(text, type = 'error') {
             const box = document.getElementById('loginMessage');
             box.textContent = text;
@@ -113,18 +103,9 @@
                 return;
             }
 
-            if (email === MASTER_LOGIN.email && password === MASTER_LOGIN.senha) {
-                localStorage.setItem(sessionKey, JSON.stringify(MASTER_LOGIN.usuario));
-                showMessage('Login aprovado! Entrando...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'principal.html';
-                }, 1500);
-                return;
-            }
-
             try {
                 // Envia as credenciais para a rota de login da API
-                const resposta = await fetch('http://localhost:3000/api/login', {
+                const resposta = await apiFetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, senha: password })
@@ -133,8 +114,8 @@
                 if (resposta.ok) {
                     const dados = await resposta.json();
                     
-                    // Salva os dados do usuário (id, nome, email) no localStorage
-                    localStorage.setItem(sessionKey, JSON.stringify(dados.usuario));
+                    // Salva os dados do usuário + token JWT da sessão
+                    GarixosSessao.salvar(dados.usuario, dados.token);
                     
                     showMessage('Login aprovado! Entrando...', 'success');
                     setTimeout(() => {

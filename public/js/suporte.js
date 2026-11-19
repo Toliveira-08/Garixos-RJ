@@ -1,14 +1,9 @@
 /* =====================================================
-   GARIXOS — Painel de Suporte (suporte.js)
-   Instalação:
-     1. suporte.html → raiz do projeto
-     2. css/suporte.css → pasta css/
-     3. js/suporte.js  → pasta js/
-   Adicione no server.js as rotas de chamados e feedbacks
-   conforme descrito no final deste arquivo.
+   GARIXOS — Painel administrativo de suporte (suporte.js)
+   Acesso: usuários com perfil MASTER / ADMIN_INTERNO.
 ===================================================== */
 
-const API = 'http://localhost:3000';
+const API = ''; // mesma origem do back-end
 
 /* ══════════════════════════════════════
    ESTADO
@@ -51,8 +46,7 @@ function isMasterUsuario() {
   const usuario = getUsuarioLogado();
   if (!usuario) return false;
   const perfil = String(usuario.perfil || '').toUpperCase();
-  const email = String(usuario.email || '').toLowerCase();
-  return perfil === 'MASTER' || email === 'master@garixos.com';
+  return perfil === 'MASTER';
 }
 
 /* ══════════════════════════════════════
@@ -164,7 +158,7 @@ function fmtData(str) {
 async function carregarSolicitacoes() {
   mostrarLoading('sol');
   try {
-    const r = await fetch(API + '/api/solicitacoes');
+    const r = await apiFetch(API + '/api/solicitacoes');
     if (!r.ok) throw new Error('HTTP ' + r.status);
     solicitacoes = await r.json();
     setBadge('solicitacoes', solicitacoes.length);
@@ -232,7 +226,7 @@ async function salvarSolicitacao() {
   const veiculo_id = document.getElementById('modal-sol-veiculo').value || null;
 
   try {
-    const r = await fetch(API + '/api/solicitacoes/' + editandoSolId, {
+    const r = await apiFetch(API + '/api/solicitacoes/' + editandoSolId, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status, veiculo_id: veiculo_id ? Number(veiculo_id) : null })
@@ -252,7 +246,7 @@ async function salvarSolicitacao() {
 async function carregarChamados() {
   mostrarLoading('cham');
   try {
-    const r = await fetch(API + '/api/suporte');
+    const r = await apiFetch(API + '/api/suporte');
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const registros = await r.json();
     chamados = registros.filter(function (item) { return item.tipo === 'chamado'; });
@@ -318,7 +312,7 @@ async function salvarChamado() {
   const status = document.getElementById('modal-cham-status').value;
 
   try {
-    const r = await fetch(API + '/api/suporte/' + editandoChamId, {
+    const r = await apiFetch(API + '/api/suporte/' + editandoChamId, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status })
@@ -338,7 +332,7 @@ async function salvarChamado() {
 async function carregarFeedbacks() {
   mostrarLoading('feed');
   try {
-    const r = await fetch(API + '/api/suporte');
+    const r = await apiFetch(API + '/api/suporte');
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const registros = await r.json();
     feedbacks = registros.filter(function (item) { return item.tipo === 'feedback'; });
@@ -382,7 +376,7 @@ function renderFeedbacks() {
 async function carregarUsuarios() {
   mostrarLoading('usu');
   try {
-    const r = await fetch(API + '/api/usuarios');
+    const r = await apiFetch(API + '/api/usuarios');
     if (!r.ok) throw new Error('HTTP ' + r.status);
     usuarios = await r.json();
     setBadge('usuarios', usuarios.length);
@@ -453,7 +447,7 @@ async function salvarUsuario() {
   const perfil = document.getElementById('modal-usuario-perfil').value;
 
   try {
-    const r = await fetch(API + '/api/usuarios/' + editandoUsuarioId, {
+    const r = await apiFetch(API + '/api/usuarios/' + editandoUsuarioId, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nome, email, perfil })
@@ -491,7 +485,7 @@ async function executarExclusao(tipo, id) {
   if (!rota) return;
 
   try {
-    const r = await fetch(API + rota + id, { method: 'DELETE' });
+    const r = await apiFetch(API + rota + id, { method: 'DELETE' });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     toast('✅ ' + (tipo === 'usuario' ? 'Usuário' : 'Solicitação') + ' excluído com sucesso!', 'success');
     if (tipo === 'solicitacao') carregarSolicitacoes();

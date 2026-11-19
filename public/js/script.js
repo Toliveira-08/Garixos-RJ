@@ -80,8 +80,8 @@
 
       try {
         const [usuarioResponse, supportResponse] = await Promise.all([
-          fetch(`http://localhost:3000/api/usuarios/${user.id}`),
-          fetch('http://localhost:3000/api/suporte')
+          apiFetch(`/api/usuarios/${user.id}`),
+          apiFetch('/api/suporte')
         ]);
 
         if (!usuarioResponse.ok) {
@@ -105,7 +105,7 @@
         const dataNascimento = usuario.data_nascimento
           ? new Date(usuario.data_nascimento).toLocaleDateString('pt-BR')
           : 'Não informada';
-        const perfilTexto = usuario.perfil === 'ADMIN'
+        const perfilTexto = usuario.perfil === 'ADMIN_INTERNO'
           ? 'Administrador'
           : usuario.perfil === 'MASTER'
             ? 'Master'
@@ -317,7 +317,7 @@ function showNotificationToast() {
       historyBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem; color:var(--text-muted);">Carregando histórico...</td></tr>';
 
       try {
-        const resposta = await fetch('http://localhost:3000/api/solicitacoes');
+        const resposta = await apiFetch('/api/solicitacoes');
         if (!resposta.ok) throw new Error('Erro ao buscar dados do servidor');
         
         const todasSolicitacoes = await resposta.json();
@@ -392,7 +392,7 @@ function showNotificationToast() {
       if (!confirmar) return;
 
       try {
-        const resposta = await fetch(`http://localhost:3000/api/solicitacoes/${id}`, {
+        const resposta = await apiFetch(`/api/solicitacoes/${id}`, {
           method: 'DELETE'
         });
 
@@ -439,7 +439,7 @@ function showNotificationToast() {
       if (!user || !selectEndereco) return;
 
       try {
-        const resposta = await fetch('http://localhost:3000/api/enderecos');
+        const resposta = await apiFetch('/api/enderecos');
         const todosEnderecos = await resposta.json();
         
         // Filtra só os endereços do usuário atual
@@ -786,7 +786,7 @@ function stopTruckAtTrash(truckData, trash) {
       const tipoLixoFormatado = tipoLixo.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
 
       try {
-        const resposta = await fetch('http://localhost:3000/api/solicitacoes', {
+        const resposta = await apiFetch('/api/solicitacoes', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -833,7 +833,7 @@ function stopTruckAtTrash(truckData, trash) {
       const logradouroCompleto = complemento ? `${rua} - ${complemento}` : rua;
 
       try {
-        const resposta = await fetch('http://localhost:3000/api/enderecos', {
+        const resposta = await apiFetch('/api/enderecos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1008,7 +1008,7 @@ function stopTruckAtTrash(truckData, trash) {
 
       try {
         // 4. Enviar para a sua rota no Node.js
-        const resposta = await fetch('http://localhost:3000/api/assistant/chat', {
+        const resposta = await apiFetch('/api/assistant/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ history: chatHistory })
@@ -1130,7 +1130,7 @@ function finishElderlyTutorial() {
       const box = document.getElementById('supportMessage-response');
 
       try {
-        const response = await fetch('http://localhost:3000/api/suporte', {
+        const response = await apiFetch('/api/suporte', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1173,7 +1173,7 @@ function finishElderlyTutorial() {
       const box = document.getElementById('feedbackMessage-response');
 
       try {
-        const response = await fetch('http://localhost:3000/api/suporte', {
+        const response = await apiFetch('/api/suporte', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1331,7 +1331,7 @@ function recoverPassword() {
       listaEnderecos.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">Carregando seus endereços...</p>';
 
       try {
-        const resposta = await fetch('http://localhost:3000/api/enderecos');
+        const resposta = await apiFetch('/api/enderecos');
         const todosEnderecos = await resposta.json();
         
         // Filtra só os endereços deste usuário
@@ -1372,7 +1372,7 @@ function recoverPassword() {
 
       try {
         // A nossa rota exige o ID do endereço e o ID do usuário para segurança!
-        const resposta = await fetch(`http://localhost:3000/api/enderecos/${enderecoId}/${user.id}`, {
+        const resposta = await apiFetch(`/api/enderecos/${enderecoId}/${user.id}`, {
           method: 'DELETE'
         });
 

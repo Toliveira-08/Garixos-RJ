@@ -3,7 +3,7 @@
 ===================================================== */
 
 (function () {
-  const ASSISTANT_API_URL = 'http://localhost:3000/api/assistant/chat';
+  const ASSISTANT_API_URL = '/api/assistant/chat';
 
   let history = [];
   let pendingElderlyTutorial = false;
@@ -287,7 +287,7 @@
   }
 
   async function callAssistantApi() {
-    const response = await fetch(ASSISTANT_API_URL, {
+    const response = await apiFetch(ASSISTANT_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

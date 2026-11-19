@@ -101,6 +101,7 @@
         </section>
     </div>
 
+    <script src="./js/api.js"></script>
     <script>
         // Funções de formatação e Validação Visuais
         let registerMessageTimeoutId = null;
@@ -327,15 +328,14 @@
 
             try {
                 // 1. Cria o Usuário no Banco de Dados
-                const respostaUsuario = await fetch('http://localhost:3000/api/usuarios', {
+                const respostaUsuario = await apiFetch('/api/usuarios', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         nome: fullName,
                         email: email,
                         senha: password,
-                        data_nascimento: birthDate,
-                        perfil: 'CLIENTE'
+                        data_nascimento: birthDate
                     })
                 });
 
@@ -343,15 +343,18 @@
                     const novoUsuario = await respostaUsuario.json();
                     
                     // 2. Se o usuário foi criado, usa o ID gerado para salvar o Endereço dele
-                    const respostaEndereco = await fetch('http://localhost:3000/api/enderecos', {
+                    const respostaEndereco = await apiFetch('/api/enderecos', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // O cadastro devolve um token, usado para registrar o endereço do novo usuário
+                            'Authorization': 'Bearer ' + novoUsuario.token
+                        },
                         body: JSON.stringify({
-                            usuario_id: novoUsuario.id, 
                             cep: maskCEP(cep),
                             logradouro: street,
                             bairro: bairroViaCEP, // Agora envia o bairro correto do ViaCEP
-                            numero: number
+                            numero: number || 'S/N'
                         })
                     });
 
@@ -364,7 +367,8 @@
                         showMessage('Conta criada, mas houve um erro ao gravar o seu endereço.', 'error');
                     }
                 } else {
-                    showMessage('Erro ao criar conta. O email já pode estar em uso.', 'error');
+                    const erro = await respostaUsuario.json().catch(() => ({}));
+                    showMessage(erro.mensagem || 'Erro ao criar conta. Tente novamente.', 'error');
                 }
             } catch (erro) {
                 console.error(erro);
