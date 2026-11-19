@@ -176,4 +176,3 @@ Revisão feita depois da entrega acadêmica para deixar o projeto mais próximo 
 | Back-end | João e Diego |
 | Banco de Dados | Caue e Edu |
 
-Repositório original da equipe: [steh-cpu/ProjetoGarixos](https://github.com/steh-cpu/ProjetoGarixos)
