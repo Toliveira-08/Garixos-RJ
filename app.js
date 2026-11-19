@@ -7,7 +7,12 @@ const helmet = require('helmet');
 
 const app = express();
 
-app.use(helmet({ contentSecurityPolicy: false })); // CSP desligada: o front usa CDNs (Leaflet, Font Awesome...)
+app.use(helmet({
+  contentSecurityPolicy: false, // CSP desligada: o front usa CDNs (Leaflet, Font Awesome...)
+  // O padrão do Helmet (no-referrer) faz o OpenStreetMap bloquear os tiles do mapa (403):
+  // a política de uso deles exige o cabeçalho Referer.
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
+}));
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
 app.use(express.json({ limit: '100kb' }));
 
