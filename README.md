@@ -4,7 +4,7 @@
 ![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Sequelize-4169E1?logo=postgresql&logoColor=white)
 ![JWT](https://img.shields.io/badge/Auth-JWT%20%2B%20bcrypt-orange)
-![CI](https://github.com/SEU_USUARIO/garixos/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Toliveira-08/Garixos-RJ/actions/workflows/ci.yml/badge.svg)
 
 Plataforma **fullstack** que conecta cidadãos às empresas de limpeza urbana. O cidadão cadastra endereços,
 solicita coletas (orgânico, reciclável, eletrônico, poda, entulho), acompanha o status e tira dúvidas com uma
@@ -115,8 +115,8 @@ erDiagram
 **Pré-requisitos:** Node.js 20+ e PostgreSQL.
 
 ```bash
-git clone https://github.com/SEU_USUARIO/garixos.git
-cd garixos
+git clone https://github.com/Toliveira-08/Garixos-RJ.git
+cd Garixos-RJ
 npm install
 
 cp .env.example .env      # ajuste usuário/senha do banco, JWT_SECRET e ADMIN_*
